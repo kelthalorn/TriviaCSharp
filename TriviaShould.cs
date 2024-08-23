@@ -65,7 +65,7 @@ public class TriviaShould
     }
     
     [Test]
-    public void Player_is_still_in_penalty_box_when_dice_result_is_not_even()
+    public void Player_is_still_in_penalty_box_when_dice_result_is_even()
     {
         var player1 = "player1";
         var player2 = "player2";
@@ -75,15 +75,14 @@ public class TriviaShould
         game.Roll(1);
         game.WrongAnswer();
         game.Roll(5);
-        game.WasCorrectlyAnswered();
-        game.Roll(3);
+        game.CorrectAnswer();
+        game.Roll(2);
         
         Check.That(game.IsInPenaltyBox(player1)).IsEqualTo(true);
     }
     
-    [Ignore("buggy functionality")]
-    //[Test]
-    public void Player_get_out_penalty_box_when_dice_result_is_not_odd()
+    [Test]
+    public void Player_get_out_penalty_box_when_dice_result_is_odd()
     {
         var player1 = "player1";
         var player2 = "player2";
@@ -92,9 +91,9 @@ public class TriviaShould
         game.Add(player2);
         game.Roll(1);
         game.WrongAnswer();
-        game.Roll(5);
-        game.WasCorrectlyAnswered();
-        game.Roll(2);
+        game.Roll(4);
+        game.CorrectAnswer();
+        game.Roll(3);
         
         Check.That(game.IsInPenaltyBox(player1)).IsEqualTo(false);
     }
@@ -109,25 +108,9 @@ public class TriviaShould
         game.Add(player2);
         var player1PursesBeforeRoll = game.GetPurses(player1);
         game.Roll(1);
-        game.WasCorrectlyAnswered();
+        game.CorrectAnswer();
         
         Check.That(game.GetPurses(player1)).IsEqualTo(player1PursesBeforeRoll + 1);
-    }
-    
-    [Test]
-    public void Player_answered_correctly_when_in_penalty_box_and_not_getting_out()
-    {
-        var player1 = "player1";
-        var game = new Game();
-        game.Add(player1);
-        
-        var player1PursesBeforeRoll = game.GetPurses(player1);
-        game.Roll(1);
-        game.WrongAnswer();
-        game.Roll(6);
-        game.WasCorrectlyAnswered();
-        
-        Check.That(game.GetPurses(player1)).IsEqualTo(player1PursesBeforeRoll);
     }
     
     [Test]
@@ -141,7 +124,7 @@ public class TriviaShould
         game.Roll(1);
         game.WrongAnswer();
         game.Roll(5);
-        game.WasCorrectlyAnswered();
+        game.CorrectAnswer();
         
         Check.That(game.GetPurses(player1)).IsEqualTo(player1PursesBeforeRoll + 1);
     }

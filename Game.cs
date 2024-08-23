@@ -5,7 +5,7 @@ public class Game
     private int _currentPlayer;
 
     private readonly bool[] _inPenaltyBox = new bool[6];
-    private bool _isGettingOutOfPenaltyBox;
+    
     private bool IsPlayerInPenaltyBox => _inPenaltyBox[_currentPlayer];
 
     private readonly int[] _places = new int[6];
@@ -65,36 +65,24 @@ public class Game
         {
             if (dice.PermitGettingOutPenaltyBox())
             {
-                PlayerIsGettingOutPenaltyBox();
+                PutOutPlayerFromPenaltyBox();
 
                 Log.PlayerIsGettingOutPenaltyBox(PlayerName);
 
                 MovePlayer(dice);
-
                 AskQuestion();
             }
             else
             {
                 Log.PlayerIsNotGettingOutPenaltyBox(PlayerName);
-                PlayerIsNotGettingOutPenaltyBox();
+                NextPlayer();
             }
         }
         else
         {
             MovePlayer(dice);
-
             AskQuestion();
         }
-    }
-
-    private void PlayerIsNotGettingOutPenaltyBox()
-    {
-        _isGettingOutOfPenaltyBox = false;
-    }
-
-    private void PlayerIsGettingOutPenaltyBox()
-    {
-        _isGettingOutOfPenaltyBox = true;
     }
 
     private void MovePlayer(int dice)
@@ -123,31 +111,20 @@ public class Game
         };
     }
 
-    public bool WasCorrectlyAnswered()
+    public bool WrongAnswer()
     {
-        bool didPlayerNotWon;
-        if (IsPlayerInPenaltyBox)
-        {
-            if (IsGettingOutOfPenaltyBox())
-            {
-                WinPurse();
+        Log.AnswerIsWrong(PlayerName);
+        PutPlayerInPenaltyBox();
 
-                didPlayerNotWon = DidPlayerNotWin();
-                if (didPlayerNotWon)
-                {
-                    NextPlayer();    
-                }
-        
-                return didPlayerNotWon;
-            }
+        NextPlayer();
+        return true;
+    }
 
-            NextPlayer();
-            return true;
-        }
-
+    public bool CorrectAnswer()
+    {
         WinPurse();
 
-        didPlayerNotWon = DidPlayerNotWin();
+        var didPlayerNotWon = DidPlayerNotWin();
         if (didPlayerNotWon)
         {
             NextPlayer();    
@@ -162,29 +139,21 @@ public class Game
         Log.AnswerIsCorrect(PlayerName, PlayerPurses);
     }
 
-    private bool IsGettingOutOfPenaltyBox()
-    {
-        return _isGettingOutOfPenaltyBox;
-    }
-
     private void NextPlayer()
     {
         _currentPlayer++;
         if (_currentPlayer == _players.Count) _currentPlayer = 0;
     }
 
-    public bool WrongAnswer()
-    {
-        Log.AnswerIsWrong(PlayerName);
-        PutPlayerInPenaltyBox();
-
-        NextPlayer();
-        return true;
-    }
-
+    
     private void PutPlayerInPenaltyBox()
     {
         _inPenaltyBox[_currentPlayer] = true;
+    }
+
+    private void PutOutPlayerFromPenaltyBox()
+    {
+        _inPenaltyBox[_currentPlayer] = false;
     }
 
     private bool DidPlayerNotWin()

@@ -26,7 +26,7 @@ public class GameRunner
             }
             else
             {
-                notAWinner = aGame.WasCorrectlyAnswered();
+                notAWinner = aGame.CorrectAnswer();
             }
 
 
