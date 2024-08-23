@@ -50,6 +50,7 @@
             Console.WriteLine(playerName + " was added");
             Console.WriteLine("They are player number " + players.Count);
             return true;
+            
         }
 
         public int howManyPlayers()

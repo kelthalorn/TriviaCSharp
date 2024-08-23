@@ -8,6 +8,7 @@ public class TriviaShould
     [Test]
     public void Players_has_been_added()
     {
+        
         var player1 = "player1";
         var player2 = "player2";
         var game = new Game();
