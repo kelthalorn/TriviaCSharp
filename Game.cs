@@ -6,12 +6,16 @@ public class Game
 
     private readonly bool[] _inPenaltyBox = new bool[6];
     private bool _isGettingOutOfPenaltyBox;
+    private bool IsPlayerInPenaltyBox => _inPenaltyBox[_currentPlayer];
 
     private readonly int[] _places = new int[6];
-
+    private int CurrentPlayerPlace => _places[_currentPlayer];
 
     private readonly List<string> _players = new();
+    private string PlayerName => _players[_currentPlayer];
+    
     private readonly int[] _purses = new int[6];
+    private int PlayerPurses => _purses[_currentPlayer];
 
     private readonly Dictionary<string, Stack<string>> _questions = new()
     {
@@ -44,112 +48,126 @@ public class Game
         _purses[HowManyPlayers()] = 0;
         _inPenaltyBox[HowManyPlayers()] = false;
 
-        Console.WriteLine(playerName + " was added");
-        Console.WriteLine("They are player number " + _players.Count);
+        Log.AddPlayer(playerName, _players);
         return true;
     }
 
-    public int HowManyPlayers()
+    private int HowManyPlayers()
     {
         return _players.Count;
     }
 
-    public void Roll(int roll)
+    public void Roll(int dice)
     {
-        Console.WriteLine(_players[_currentPlayer] + " is the current player");
-        Console.WriteLine("They have rolled a " + roll);
+        Log.RollDice(dice, PlayerName);
 
-        if (_inPenaltyBox[_currentPlayer])
+        if (IsPlayerInPenaltyBox)
         {
-            if (roll % 2 != 0)
+            if (dice.PermitGettingOutPenaltyBox())
             {
-                _isGettingOutOfPenaltyBox = true;
+                PlayerIsGettingOutPenaltyBox();
 
-                Console.WriteLine(_players[_currentPlayer] + " is getting out of the penalty box");
+                Log.PlayerIsGettingOutPenaltyBox(PlayerName);
 
-                MovePlayer(roll);
+                MovePlayer(dice);
 
                 AskQuestion();
             }
             else
             {
-                Console.WriteLine(_players[_currentPlayer] + " is not getting out of the penalty box");
-                _isGettingOutOfPenaltyBox = false;
+                Log.PlayerIsNotGettingOutPenaltyBox(PlayerName);
+                PlayerIsNotGettingOutPenaltyBox();
             }
         }
         else
         {
-            MovePlayer(roll);
+            MovePlayer(dice);
 
             AskQuestion();
         }
     }
 
-    public void MovePlayer(int roll)
+    private void PlayerIsNotGettingOutPenaltyBox()
     {
-        _places[_currentPlayer] += roll;
+        _isGettingOutOfPenaltyBox = false;
+    }
+
+    private void PlayerIsGettingOutPenaltyBox()
+    {
+        _isGettingOutOfPenaltyBox = true;
+    }
+
+    private void MovePlayer(int dice)
+    {
+        _places[_currentPlayer] += dice;
         if (_places[_currentPlayer] > 11) _places[_currentPlayer] -= 12;
 
-        Console.WriteLine(_players[_currentPlayer]
-                          + "'s new location is "
-                          + _places[_currentPlayer]);
-        Console.WriteLine("The category is " + CurrentCategory());
+        Log.MovePlayerToNextLocation(PlayerName, CurrentPlayerPlace, CurrentCategory());
     }
 
     private void AskQuestion()
     {
         var question = _questions[CurrentCategory()].Pop();
-        Console.WriteLine(question);
+        Log.AskQuestion(question);
     }
 
     public string CurrentCategory()
     {
         var categoryPosition = _places[_currentPlayer] % 4;
-        if (categoryPosition == 0) return "Pop";
-        if (categoryPosition == 1) return "Science";
-        if (categoryPosition == 2) return "Sports";
-
-        return "Rock";
+        return categoryPosition switch
+        {
+            0 => "Pop",
+            1 => "Science",
+            2 => "Sports",
+            _ => "Rock"
+        };
     }
 
     public bool WasCorrectlyAnswered()
     {
-        var winner = false;
-        if (_inPenaltyBox[_currentPlayer])
+        bool didPlayerNotWon;
+        if (IsPlayerInPenaltyBox)
         {
-            if (_isGettingOutOfPenaltyBox)
+            if (IsGettingOutOfPenaltyBox())
             {
-                Console.WriteLine("Answer was correct!!!!");
-                _purses[_currentPlayer]++;
-                Console.WriteLine(_players[_currentPlayer]
-                                  + " now has "
-                                  + _purses[_currentPlayer]
-                                  + " Gold Coins.");
+                WinPurse();
 
-                winner = DidPlayerWin();
-                NextPlayer();
-
-                return winner;
+                didPlayerNotWon = DidPlayerNotWin();
+                if (didPlayerNotWon)
+                {
+                    NextPlayer();    
+                }
+        
+                return didPlayerNotWon;
             }
 
             NextPlayer();
             return true;
         }
 
-        Console.WriteLine("Answer was corrent!!!!");
-        _purses[_currentPlayer]++;
-        Console.WriteLine(_players[_currentPlayer]
-                          + " now has "
-                          + _purses[_currentPlayer]
-                          + " Gold Coins.");
+        WinPurse();
 
-        winner = DidPlayerWin();
-        NextPlayer();
-
-        return winner;
+        didPlayerNotWon = DidPlayerNotWin();
+        if (didPlayerNotWon)
+        {
+            NextPlayer();    
+        }
+        
+        return didPlayerNotWon;
     }
 
-    public void NextPlayer()
+    private void WinPurse()
+    {
+        _purses[_currentPlayer]++;
+        Log.AnswerIsCorrect(PlayerName, PlayerPurses);
+    }
+
+    private bool IsGettingOutOfPenaltyBox()
+    {
+        return _isGettingOutOfPenaltyBox;
+    }
+
+    private void NextPlayer()
     {
         _currentPlayer++;
         if (_currentPlayer == _players.Count) _currentPlayer = 0;
@@ -157,16 +175,19 @@ public class Game
 
     public bool WrongAnswer()
     {
-        Console.WriteLine("Question was incorrectly answered");
-        Console.WriteLine(_players[_currentPlayer] + " was sent to the penalty box");
-        _inPenaltyBox[_currentPlayer] = true;
+        Log.AnswerIsWrong(PlayerName);
+        PutPlayerInPenaltyBox();
 
-        _currentPlayer++;
-        if (_currentPlayer == _players.Count) _currentPlayer = 0;
+        NextPlayer();
         return true;
     }
 
-    private bool DidPlayerWin()
+    private void PutPlayerInPenaltyBox()
+    {
+        _inPenaltyBox[_currentPlayer] = true;
+    }
+
+    private bool DidPlayerNotWin()
     {
         return _purses[_currentPlayer] != 6;
     }
@@ -178,25 +199,24 @@ public class Game
 
     public bool IsInPenaltyBox(string playerName)
     {
-        var indexOfPlayer = _players.IndexOf(playerName);
-        if (indexOfPlayer < 0) return false;
-
-        return _inPenaltyBox[indexOfPlayer];
+        return _inPenaltyBox[GetIndexOfPlayer(playerName)];
     }
-
+    
     public int GetPurses(string playerName)
     {
-        var indexOfPlayer = _players.IndexOf(playerName);
-        if (indexOfPlayer < 0) Console.WriteLine("Player doesn't exist");
-
-        return _purses[indexOfPlayer];
+        return _purses[GetIndexOfPlayer(playerName)];
     }
 
     public int GetPlace(string playerName)
     {
+        return _places[GetIndexOfPlayer(playerName)];
+    }
+    
+    private int GetIndexOfPlayer(string playerName)
+    {
         var indexOfPlayer = _players.IndexOf(playerName);
-        if (indexOfPlayer < 0) Console.WriteLine("Player doesn't exist");
-
-        return _places[indexOfPlayer];
+        if (indexOfPlayer < 0) 
+            Console.WriteLine("Player doesn't exist");
+        return indexOfPlayer;
     }
 }

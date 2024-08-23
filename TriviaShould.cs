@@ -12,8 +12,8 @@ public class TriviaShould
         var player1 = "player1";
         var player2 = "player2";
         var game = new Game();
-        game.add(player1);
-        game.add(player2);
+        game.Add(player1);
+        game.Add(player2);
 
         Check.That(game.GetCurrentPlayer()).IsEqualTo(player1);
     }
@@ -34,10 +34,10 @@ public class TriviaShould
     {
         var player = "player1";
         var game = new Game();
-        game.add(player);
-        game.roll(dice);
+        game.Add(player);
+        game.Roll(dice);
 
-        Check.That(game.currentCategory()).IsEqualTo(categoryName);
+        Check.That(game.CurrentCategory()).IsEqualTo(categoryName);
     }
     
     [Test]
@@ -45,9 +45,9 @@ public class TriviaShould
     {
         var player = "player1";
         var game = new Game();
-        game.add(player);
+        game.Add(player);
 
-        Check.That(game.isPlayable()).IsEqualTo(false);
+        Check.That(game.IsPlayable()).IsEqualTo(false);
     }
 
     [Test]
@@ -56,10 +56,10 @@ public class TriviaShould
         var player1 = "player1";
         var player2 = "player2";
         var game = new Game();
-        game.add(player1);
-        game.add(player2);
-        game.roll(1);
-        game.wrongAnswer();
+        game.Add(player1);
+        game.Add(player2);
+        game.Roll(1);
+        game.WrongAnswer();
 
         Check.That(game.IsInPenaltyBox(player1)).IsEqualTo(true);
     }
@@ -70,13 +70,13 @@ public class TriviaShould
         var player1 = "player1";
         var player2 = "player2";
         var game = new Game();
-        game.add(player1);
-        game.add(player2);
-        game.roll(1);
-        game.wrongAnswer();
-        game.roll(5);
-        game.wasCorrectlyAnswered();
-        game.roll(3);
+        game.Add(player1);
+        game.Add(player2);
+        game.Roll(1);
+        game.WrongAnswer();
+        game.Roll(5);
+        game.WasCorrectlyAnswered();
+        game.Roll(3);
         
         Check.That(game.IsInPenaltyBox(player1)).IsEqualTo(true);
     }
@@ -88,13 +88,13 @@ public class TriviaShould
         var player1 = "player1";
         var player2 = "player2";
         var game = new Game();
-        game.add(player1);
-        game.add(player2);
-        game.roll(1);
-        game.wrongAnswer();
-        game.roll(5);
-        game.wasCorrectlyAnswered();
-        game.roll(2);
+        game.Add(player1);
+        game.Add(player2);
+        game.Roll(1);
+        game.WrongAnswer();
+        game.Roll(5);
+        game.WasCorrectlyAnswered();
+        game.Roll(2);
         
         Check.That(game.IsInPenaltyBox(player1)).IsEqualTo(false);
     }
@@ -105,11 +105,11 @@ public class TriviaShould
         var player1 = "player1";
         var player2 = "player2";
         var game = new Game();
-        game.add(player1);
-        game.add(player2);
+        game.Add(player1);
+        game.Add(player2);
         var player1PursesBeforeRoll = game.GetPurses(player1);
-        game.roll(1);
-        game.wasCorrectlyAnswered();
+        game.Roll(1);
+        game.WasCorrectlyAnswered();
         
         Check.That(game.GetPurses(player1)).IsEqualTo(player1PursesBeforeRoll + 1);
     }
@@ -119,13 +119,13 @@ public class TriviaShould
     {
         var player1 = "player1";
         var game = new Game();
-        game.add(player1);
+        game.Add(player1);
         
         var player1PursesBeforeRoll = game.GetPurses(player1);
-        game.roll(1);
-        game.wrongAnswer();
-        game.roll(6);
-        game.wasCorrectlyAnswered();
+        game.Roll(1);
+        game.WrongAnswer();
+        game.Roll(6);
+        game.WasCorrectlyAnswered();
         
         Check.That(game.GetPurses(player1)).IsEqualTo(player1PursesBeforeRoll);
     }
@@ -135,13 +135,13 @@ public class TriviaShould
     {
         var player1 = "player1";
         var game = new Game();
-        game.add(player1);
+        game.Add(player1);
         
         var player1PursesBeforeRoll = game.GetPurses(player1);
-        game.roll(1);
-        game.wrongAnswer();
-        game.roll(5);
-        game.wasCorrectlyAnswered();
+        game.Roll(1);
+        game.WrongAnswer();
+        game.Roll(5);
+        game.WasCorrectlyAnswered();
         
         Check.That(game.GetPurses(player1)).IsEqualTo(player1PursesBeforeRoll + 1);
     }
@@ -151,9 +151,9 @@ public class TriviaShould
     {
         var player1 = "player1";
         var game = new Game();
-        game.add(player1);
-        game.roll(6);
-        game.roll(7);
+        game.Add(player1);
+        game.Roll(6);
+        game.Roll(7);
         
         Check.That(game.GetPlace(player1)).IsEqualTo(1);
     }
@@ -163,10 +163,10 @@ public class TriviaShould
     {
         var player1 = "player1";
         var game = new Game();
-        game.add(player1);
-        game.roll(6);
-        game.wrongAnswer();
-        game.roll(7);
+        game.Add(player1);
+        game.Roll(6);
+        game.WrongAnswer();
+        game.Roll(7);
         
         Check.That(game.GetPlace(player1)).IsEqualTo(1);
     }
