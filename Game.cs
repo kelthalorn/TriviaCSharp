@@ -70,7 +70,10 @@
 
                     Console.WriteLine(players[currentPlayer] + " is getting out of the penalty box");
                     places[currentPlayer] = places[currentPlayer] + roll;
-                    if (places[currentPlayer] > 11) places[currentPlayer] = places[currentPlayer] - 12;
+                    if (places[currentPlayer] > 11)
+                    {
+                        places[currentPlayer] = places[currentPlayer] - 12;
+                    }
 
                     Console.WriteLine(players[currentPlayer]
                             + "'s new location is "
@@ -89,7 +92,10 @@
             {
 
                 places[currentPlayer] = places[currentPlayer] + roll;
-                if (places[currentPlayer] > 11) places[currentPlayer] = places[currentPlayer] - 12;
+                if (places[currentPlayer] > 11)
+                {
+                    places[currentPlayer] = places[currentPlayer] - 12;
+                }
 
                 Console.WriteLine(players[currentPlayer]
                         + "'s new location is "
@@ -137,6 +143,7 @@
             if (places[currentPlayer] == 2) return "Sports";
             if (places[currentPlayer] == 6) return "Sports";
             if (places[currentPlayer] == 10) return "Sports";
+            
             return "Rock";
         }
 
@@ -217,6 +224,28 @@
             }
             
             return inPenaltyBox[indexOfPlayer];
+        }
+
+        public int GetPurses(string playerName)
+        {
+            var indexOfPlayer = players.IndexOf(playerName);
+            if (indexOfPlayer < 0)
+            {
+                Console.WriteLine("Player doesn't exist");
+            }
+            
+            return purses[indexOfPlayer];
+        }
+
+        public int GetPlace(string playerName)
+        {
+            var indexOfPlayer = players.IndexOf(playerName);
+            if (indexOfPlayer < 0)
+            {
+                Console.WriteLine("Player doesn't exist");
+            }
+            
+            return places[indexOfPlayer];
         }
     }
 
