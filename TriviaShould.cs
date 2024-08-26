@@ -8,14 +8,13 @@ public class TriviaShould
     [Test]
     public void Players_has_been_added()
     {
-        
-        var player1 = "player1";
-        var player2 = "player2";
+        var player1 = new Player("player1");
+        var player2 = new Player("player2");
         var game = new Game();
         game.Add(player1);
         game.Add(player2);
 
-        Check.That(game.GetCurrentPlayer()).IsEqualTo(player1);
+        Check.That(game.GetCurrentPlayerName()).IsEqualTo(player1.Name);
     }
 
     [TestCase(0, "Pop")]
@@ -32,9 +31,9 @@ public class TriviaShould
     [TestCase(11,"Rock")]
     public void Current_category_is_science_when_arrive_on_place(int dice, string categoryName)
     {
-        var player = "player1";
+        var player1 = new Player("player1");
         var game = new Game();
-        game.Add(player);
+        game.Add(player1);
         game.Roll(dice);
 
         Check.That(game.CurrentCategory()).IsEqualTo(categoryName);
@@ -43,9 +42,9 @@ public class TriviaShould
     [Test]
     public void Could_not_play_when_only_on_player_has_been_added()
     {
-        var player = "player1";
+        var player1 = new Player("player1");
         var game = new Game();
-        game.Add(player);
+        game.Add(player1);
 
         Check.That(game.IsPlayable()).IsEqualTo(false);
     }
@@ -53,22 +52,22 @@ public class TriviaShould
     [Test]
     public void Player_arrives_in_penalty_box_when_answer_is_wrong()
     {
-        var player1 = "player1";
-        var player2 = "player2";
+        var player1 = new Player("player1");
+        var player2 = new Player("player2");
         var game = new Game();
         game.Add(player1);
         game.Add(player2);
         game.Roll(1);
         game.WrongAnswer();
 
-        Check.That(game.IsInPenaltyBox(player1)).IsEqualTo(true);
+        Check.That(game.PenaltyBox.IsIn(player1)).IsEqualTo(true);
     }
     
     [Test]
     public void Player_is_still_in_penalty_box_when_dice_result_is_even()
     {
-        var player1 = "player1";
-        var player2 = "player2";
+        var player1 = new Player("player1");
+        var player2 = new Player("player2");
         var game = new Game();
         game.Add(player1);
         game.Add(player2);
@@ -78,14 +77,14 @@ public class TriviaShould
         game.CorrectAnswer();
         game.Roll(2);
         
-        Check.That(game.IsInPenaltyBox(player1)).IsEqualTo(true);
+        Check.That(game.PenaltyBox.IsIn(player1)).IsEqualTo(true);
     }
     
     [Test]
     public void Player_get_out_penalty_box_when_dice_result_is_odd()
     {
-        var player1 = "player1";
-        var player2 = "player2";
+        var player1 = new Player("player1");
+        var player2 = new Player("player2");
         var game = new Game();
         game.Add(player1);
         game.Add(player2);
@@ -95,14 +94,14 @@ public class TriviaShould
         game.CorrectAnswer();
         game.Roll(3);
         
-        Check.That(game.IsInPenaltyBox(player1)).IsEqualTo(false);
+        Check.That(game.PenaltyBox.IsIn(player1)).IsEqualTo(false);
     }
     
     [Test]
     public void Player_answered_correctly_when_not_in_penalty_box()
     {
-        var player1 = "player1";
-        var player2 = "player2";
+        var player1 = new Player("player1");
+        var player2 = new Player("player2");
         var game = new Game();
         game.Add(player1);
         game.Add(player2);
@@ -116,7 +115,7 @@ public class TriviaShould
     [Test]
     public void Player_answered_correctly_when_in_penalty_box_and_getting_out()
     {
-        var player1 = "player1";
+        var player1 = new Player("player1");
         var game = new Game();
         game.Add(player1);
         
@@ -132,7 +131,7 @@ public class TriviaShould
     [Test]
     public void Player_arrives_on_place_1_when_rolling_from_place_6_and_get_7_on_dice()
     {
-        var player1 = "player1";
+        var player1 = new Player("player1");
         var game = new Game();
         game.Add(player1);
         game.Roll(6);
@@ -144,7 +143,7 @@ public class TriviaShould
     [Test]
     public void Player_arrives_on_place_1_and_is_getting_out_penalty_box_when_rolling_from_place_6_and_get_7_on_dice()
     {
-        var player1 = "player1";
+        var player1 = new Player("player1");
         var game = new Game();
         game.Add(player1);
         game.Roll(6);

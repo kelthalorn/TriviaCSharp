@@ -2,10 +2,10 @@ namespace TriviaKata;
 
 public class Log
 {
-    public static void AddPlayer(string playerName, List<string> players)
+    public static void AddPlayer(string playerName, int nbPlayers)
     {
         Console.WriteLine(playerName + " was added");
-        Console.WriteLine("They are player number " + players.Count);
+        Console.WriteLine("They are player number " + nbPlayers);
     }
 
     public static void RollDice(int dice, string currentPlayer)
