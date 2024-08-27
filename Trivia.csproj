@@ -9,10 +9,10 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.0" />
-      <PackageReference Include="NFluent" Version="3.0.4" />
-      <PackageReference Include="NUnit" Version="4.1.0" />
-      <PackageReference Include="Value" Version="1.1.0.1" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.0"/>
+        <PackageReference Include="NFluent" Version="3.0.4"/>
+        <PackageReference Include="NUnit" Version="4.1.0"/>
+        <PackageReference Include="Value" Version="1.1.0.1"/>
     </ItemGroup>
 
 </Project>

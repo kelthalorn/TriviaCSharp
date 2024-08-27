@@ -2,26 +2,24 @@
 
 public class Game
 {
+    private readonly Board _board = new();
+    private readonly List<Player> _players = [];
+    private readonly Questions _questions = new();
     private int _currentPlayerIndex;
     private Player CurrentPlayer => _players[_currentPlayerIndex];
-    private readonly List<Player> _players = [];
 
     public PenaltyBox PenaltyBox { get; } = new();
-    private readonly Questions _questions = new();
 
-    private readonly Board _board = new();
-    
     public bool IsPlayable()
     {
         return HowManyPlayers() >= 2;
     }
 
-    public bool Add(Player player)
+    public void Add(Player player)
     {
         _players.Add(player);
 
         Log.AddPlayer(player.Name, _players.Count);
-        return true;
     }
 
     private int HowManyPlayers()
@@ -33,30 +31,23 @@ public class Game
     {
         Log.RollDice(dice, CurrentPlayer.Name);
 
-        if (PenaltyBox.IsIn(CurrentPlayer))
+        if (AttemptToGetOutOfPenaltyBox(dice) is FailedToGetOutOfPenaltyBox)
         {
-            if (dice.PermitGettingOutPenaltyBox())
-            {
-                PenaltyBox.PutOut(CurrentPlayer);
-
-                Log.PlayerIsGettingOutPenaltyBox(CurrentPlayer.Name);
-
-                _board.MovePlayer(dice, _currentPlayerIndex);
-                Log.MovePlayerToNextLocation(CurrentPlayer.Name, _board.GetPlayerPlace(_currentPlayerIndex), CurrentCategory());
-                AskQuestion();
-            }
-            else
-            {
-                Log.PlayerIsNotGettingOutPenaltyBox(CurrentPlayer.Name);
-                NextPlayer();
-            }
+            NextPlayer();
+            return;
         }
-        else
-        {
-            _board.MovePlayer(dice, _currentPlayerIndex);
-            Log.MovePlayerToNextLocation(CurrentPlayer.Name, _board.GetPlayerPlace(_currentPlayerIndex), CurrentCategory());
-            AskQuestion();
-        }
+
+        _board.MovePlayer(dice, _currentPlayerIndex);
+        Log.MovePlayerToNextLocation(CurrentPlayer.Name, _board.GetPlayerPlace(_currentPlayerIndex),
+            CurrentCategory());
+        AskQuestion();
+    }
+
+    private IAttemptToGetOutOfPenaltyBox AttemptToGetOutOfPenaltyBox(int dice)
+    {
+        return PenaltyBox.IsIn(CurrentPlayer) && !PenaltyBox.ShouldPlayerGetOutPenaltyBox(dice, CurrentPlayer)
+            ? new FailedToGetOutOfPenaltyBox()
+            : new SucceedToGetOutOfPenaltyBox();
     }
 
     private void AskQuestion()
@@ -83,11 +74,8 @@ public class Game
         WinPurse();
 
         var didPlayerNotWon = CurrentPlayer.DidPlayerNotWin();
-        if (didPlayerNotWon)
-        {
-            NextPlayer();    
-        }
-        
+        if (didPlayerNotWon) NextPlayer();
+
         return didPlayerNotWon;
     }
 
@@ -107,7 +95,7 @@ public class Game
     {
         return CurrentPlayer.Name;
     }
-    
+
     public int GetPurses(Player player)
     {
         return _players[GetIndexOfPlayer(player)].Purse;
@@ -117,11 +105,11 @@ public class Game
     {
         return _board.GetPlayerPlace(GetIndexOfPlayer(player));
     }
-    
+
     private int GetIndexOfPlayer(Player player)
     {
         var playerExists = _players.Contains(player);
-        if (!playerExists) 
+        if (!playerExists)
             Console.WriteLine("Player doesn't exist");
         return _players.IndexOf(player);
     }

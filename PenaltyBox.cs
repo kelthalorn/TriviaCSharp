@@ -1,6 +1,6 @@
 namespace TriviaKata;
 
-public record PenaltyBox()
+public record PenaltyBox
 {
     private List<Player> _players { get; } = new();
 
@@ -13,8 +13,23 @@ public record PenaltyBox()
     {
         _players.Remove(player);
     }
+
     public bool IsIn(Player player)
     {
         return _players.Contains(player);
+    }
+
+    public bool ShouldPlayerGetOutPenaltyBox(int dice, Player currentPlayer)
+    {
+        if (dice.PermitGettingOutPenaltyBox())
+        {
+            PutOut(currentPlayer);
+            Log.PlayerIsGettingOutPenaltyBox(currentPlayer.Name);
+
+            return true;
+        }
+
+        Log.PlayerIsNotGettingOutPenaltyBox(currentPlayer.Name);
+        return false;
     }
 }

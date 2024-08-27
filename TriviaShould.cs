@@ -20,15 +20,15 @@ public class TriviaShould
     [TestCase(0, "Pop")]
     [TestCase(1, "Science")]
     [TestCase(2, "Sports")]
-    [TestCase(3,"Rock")]
-    [TestCase(4,"Pop")]
-    [TestCase(5,"Science")]
-    [TestCase(6,"Sports")]
-    [TestCase(7,"Rock")]
-    [TestCase(8,"Pop")]
-    [TestCase(9,"Science")]
-    [TestCase(10,"Sports")]
-    [TestCase(11,"Rock")]
+    [TestCase(3, "Rock")]
+    [TestCase(4, "Pop")]
+    [TestCase(5, "Science")]
+    [TestCase(6, "Sports")]
+    [TestCase(7, "Rock")]
+    [TestCase(8, "Pop")]
+    [TestCase(9, "Science")]
+    [TestCase(10, "Sports")]
+    [TestCase(11, "Rock")]
     public void Current_category_is_science_when_arrive_on_place(int dice, string categoryName)
     {
         var player1 = new Player("player1");
@@ -38,7 +38,7 @@ public class TriviaShould
 
         Check.That(game.CurrentCategory()).IsEqualTo(categoryName);
     }
-    
+
     [Test]
     public void Could_not_play_when_only_on_player_has_been_added()
     {
@@ -62,7 +62,7 @@ public class TriviaShould
 
         Check.That(game.PenaltyBox.IsIn(player1)).IsEqualTo(true);
     }
-    
+
     [Test]
     public void Player_is_still_in_penalty_box_when_dice_result_is_even()
     {
@@ -76,10 +76,10 @@ public class TriviaShould
         game.Roll(5);
         game.CorrectAnswer();
         game.Roll(2);
-        
+
         Check.That(game.PenaltyBox.IsIn(player1)).IsEqualTo(true);
     }
-    
+
     [Test]
     public void Player_get_out_penalty_box_when_dice_result_is_odd()
     {
@@ -93,10 +93,10 @@ public class TriviaShould
         game.Roll(4);
         game.CorrectAnswer();
         game.Roll(3);
-        
+
         Check.That(game.PenaltyBox.IsIn(player1)).IsEqualTo(false);
     }
-    
+
     [Test]
     public void Player_answered_correctly_when_not_in_penalty_box()
     {
@@ -108,26 +108,26 @@ public class TriviaShould
         var player1PursesBeforeRoll = game.GetPurses(player1);
         game.Roll(1);
         game.CorrectAnswer();
-        
+
         Check.That(game.GetPurses(player1)).IsEqualTo(player1PursesBeforeRoll + 1);
     }
-    
+
     [Test]
     public void Player_answered_correctly_when_in_penalty_box_and_getting_out()
     {
         var player1 = new Player("player1");
         var game = new Game();
         game.Add(player1);
-        
+
         var player1PursesBeforeRoll = game.GetPurses(player1);
         game.Roll(1);
         game.WrongAnswer();
         game.Roll(5);
         game.CorrectAnswer();
-        
+
         Check.That(game.GetPurses(player1)).IsEqualTo(player1PursesBeforeRoll + 1);
     }
-    
+
     [Test]
     public void Player_arrives_on_place_1_when_rolling_from_place_6_and_get_7_on_dice()
     {
@@ -136,10 +136,10 @@ public class TriviaShould
         game.Add(player1);
         game.Roll(6);
         game.Roll(7);
-        
+
         Check.That(game.GetPlace(player1)).IsEqualTo(1);
     }
-    
+
     [Test]
     public void Player_arrives_on_place_1_and_is_getting_out_penalty_box_when_rolling_from_place_6_and_get_7_on_dice()
     {
@@ -149,7 +149,21 @@ public class TriviaShould
         game.Roll(6);
         game.WrongAnswer();
         game.Roll(7);
-        
+
         Check.That(game.GetPlace(player1)).IsEqualTo(1);
+    }
+
+    [Test]
+    public void Player_does_not_move_when_not_get_out_of_penalty_box()
+    {
+        var player1 = new Player("player1");
+        var game = new Game();
+        game.Add(player1);
+        game.Roll(6);
+        var initialPlayerPosition = game.GetPlace(player1);
+        game.WrongAnswer();
+        game.Roll(6);
+
+        Check.That(game.GetPlace(player1)).IsEqualTo(initialPlayerPosition);
     }
 }

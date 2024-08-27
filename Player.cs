@@ -2,7 +2,7 @@ using Value;
 
 namespace TriviaKata;
 
-public class Player(string name):ValueType<Player>
+public class Player(string name) : ValueType<Player>
 {
     public string Name { get; } = name;
     public int Purse { get; set; }
